@@ -1,0 +1,532 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="NOINDEX, NOFOLLOW">
+  <!--add no follow tag to keep out of front facing index and search engines-->
+  <meta name="description" content="An auction website">
+  <!-- <meta property="og:image" content="https://www.mellor.io/auction-website/img/banner.png"> -->
+  <meta name="keywords" content="Online Auctions">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOOH Bidding Application</title>
+  <link rel="icon" type="image/png" href="./img/favicon.png">
+  <link href="css/main.css" rel="stylesheet" />
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="./css/auction-website.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+	#mySlide{
+		margin-top:10px;
+		margin-bottom: 15px;
+	}
+  .bar{
+ 	background: linear-gradient(to right, #2c6dd5 0%, #2c6dd5 28%, #ff4b5a 91%, #ff4b5a 100%);
+  height: 70px;
+}
+.heading{
+  font-size: 35px;
+}
+
+</style>
+</head>
+
+<body>
+  
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-firestore.js"></script>
+   
+  <script>
+  var slideNumber = 1;
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAYOYDuMKGGjTSJL5uDzG5hjQ6y_vYPiI",
+      authDomain: "auction-website-b12fc.firebaseapp.com",
+      databaseURL: "https://auction-website-b12fc.firebaseio.com",
+      projectId: "auction-website-b12fc",
+      storageBucket: "auction-website-b12fc.appspot.com",
+      messagingSenderId: "791747024664",
+      appId: "1:791747024664:web:215a222a81c6d0c2aeb06d"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var auth = firebase.auth();
+  </script>
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-dark bar">
+    <div class="container-fluid">
+      <a class="navbar-brand mb-0 h1 heading">
+        <img src="./img/favicon.png" alt="" width="42" height="45" class="d-inline-block align-text-top">
+        DOOHA Bidding Application 
+      </a>
+      <a class="navbar-brand" id="username-display"></a>
+      <!--<button id="signup-button" class="btn btn-secondary" type="submit" onclick="openLogin()">Sign up</button> -->
+    </div>
+  </nav>
+  <h2 class="w3-center"></h2>
+
+<!--<div style ="margin-left:10%;margin-bottom:20px" >
+  <img class="mySlides" src="./img/banner4.png" style="width:1870;height:125px">
+  <img class="mySlides" src="./img/banner2.png" style="width:1870;height:125px">
+  <img class="mySlides" src="./img/banner1.png" style="width:1870;height:125px">
+  style="width:1870;height:125px"
+</div> -->
+
+<div class="page-hero d-flex align-items-center justify-content-center">
+	<img id="mySlide" src="./img/banner4.png" style="width:1280px;height:350px">
+</div>
+<div class="s010">
+  <form>
+    <div class="inner-form">
+      <div class="basic-search">
+        <div class="input-field">
+          <input id="search" type="text" placeholder="Enter Device Location" onclick="showOrHideAdvancedSearchBox()"/>
+          <div class="icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="advance-search" hidden>
+        <div id = "bas-search">
+          <span class="desc">BASIC SEARCH</span>
+        <div class="row">
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Venue Type</option>
+                <option>Indoor</option>
+                <option>Outdoor</option>
+                <option>All</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Age</option>
+                <option>19 to 38 years</option>
+                <option>18 years and Below</option>
+                <option>39 to 60 years</option>
+                <option>Above 60 years</option>
+                <option>All</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>All</option>                
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row second" hidden>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Age</option>
+                <option>Below 18 years</option>
+                <option>19 to 38 years</option>
+                <option>39 to 60 years</option>
+                <option>Above 60 years</option>
+              </select>
+            </div>
+          </div> -->
+          <!-- <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" id="aim_attributes" name="choices-single-defaul" onchange="showSlider()">
+                <option placeholder="" value="">AIM Attributes</option>
+                <option value="Human Count">Human Count</option>
+                <option value="Face Count">Face Count</option>
+                <option value="Average Dwell Time">Average Dwell Time</option>
+                <option value="Average Attention Time">Average Attention Time</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Time</option>
+                <option>Last time</option>
+                <option>Today</option>
+                <option>This week</option>
+                <option>This month</option>
+                <option>This year</option>
+              </select>
+            </div>
+          </div>
+        </div> -->
+        </div>
+        <div id="adv-search" hidden>
+        <span class="desc">ADVANCED SEARCH</span>
+        <div class="row">
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Display Size</option>
+                <option>Small</option>
+                <option>Medium</option>
+                <option>Large</option>
+                <option>All</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" id="aim_attributes" name="choices-single-defaul" onchange="showSlider()">
+                <option placeholder="" value="">AIM Attributes</option>
+                <option>Human Count</option>
+                <option>Face Count</option>
+                <option>Average Dwell Time</option>
+                <option>Average Attention Time</option>
+                <option>All</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Gender</option>
+                <option>Male</option>
+                <option>Female</option>                
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row second">
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Age</option>
+                <option>Below 18 years</option>
+                <option>19 to 38 years</option>
+                <option>39 to 60 years</option>
+                <option>Above 60 years</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Venue Type</option>
+                <option>Indoor</option>
+                <option>Outdoor</option>
+                <option>All</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-field">
+            <div class="input-select">
+              <select data-trigger="" name="choices-single-defaul">
+                <option placeholder="" value="">Time</option>
+                <option>Last time</option>
+                <option>Today</option>
+                <option>This week</option>
+                <option>This month</option>
+                <option>This year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="row third">
+          <div>            
+          <div id="slidercontainer" class="slidecontainer" hidden>
+            <p id= "selected_attribute_p"></p>
+              <input type="range" id="range_slider"  min="0" max="10" value="0" onclick="showValues()"/>
+            <p id ="range_value">value: 0</p>
+          </div>
+          <div class="input-field">
+            <div class="group-btn">
+              <button class="btn btn-primary" type="button" id="toggle-search-button" onclick="togglSearch()">Advanced Search</button>
+              <button class="btn-delete" id="delete">RESET</button>
+              <button class="btn-search">SEARCH</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  <!-- Grid of auction items -->
+  <div id="auction-container" class="container">
+    <div id="auction-grid" class="row row-cols-1 row-cols-md-3 g-4">
+	</div>
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+      <div class="col-md-4 d-flex align-items-center">
+        <span class="text-muted">© 2022 LG Soft India Pvt Ltd</span>
+      </div>
+
+      <!-- <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <li class="ms-3"><a class="bi bi-github text-muted" href="https://github.com/HMellor/" width="24"
+            height="24"></a></li>
+      </ul> -->
+    </footer>
+  </div>
+
+  <!-- Login popup -->
+  <div id="login-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="login-modal-title" class="modal-title">Sign up for Markatplace Auction</h5>
+        </div>
+        <div class="modal-body">
+          <p>We use anonymous authentication provided by Google. Your account is attached to your device signature.</p>
+          <p>The username just lets us know who's bidding!</p>
+          <form onsubmit="return false;">
+            <div class="form-floating mb-3">
+              <input type="username" class="form-control" id="username-input" placeholder="username"
+                onkeypress="if (event.key == 'Enter') {newUserLogin()}">
+              <label for="username-input">Username</label>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                aria-label="Cancel">Cancel</button>
+              <button type="submit" class="btn btn-primary" onclick="newUserLogin()">Sign up</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Info popup -->
+  <div id="info-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="info-modal-title" class="modal-title"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="info-modal-desc"></p>
+          <img id="info-modal-img"></img>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Submit bid"
+            onclick="openBid(this.id)">Submit bid</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bid popup -->
+  <div id="bid-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="bid-modal-title" class="modal-title">Place your bid</h5>
+        </div>
+        <div class="modal-body">
+          <p>You are about to place a bid on <strong id="bid-modal-subtitle"></strong></p>
+          <p class="text-muted">Place your BID in $ only</p>
+          <form onsubmit="return false;">
+            <div class="form-floating mb-3">
+              <input type="amount" class="form-control" id="amount-input" placeholder="amount"
+                onkeypress="if (event.key == 'Enter') {placeBid()}">
+              <label for="amount-input">Amount</label>
+              <div id="bad-amount-feedback" class="invalid-feedback"></div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" onclick="placeBid()">Submit bid</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Custom JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="./js/auctions.js"></script>
+  <script src="./js/popups.js"></script>
+  <!-- Create anonymous account -->
+  <script>
+    populateAuctionGrid();
+    setClocks();
+    dataListener()
+    autoLogin();
+  </script>
+  <script>
+var myIndex = 0;
+carousel();
+
+function carousel() {
+
+switch (slideNumber) {
+	case 1: {
+			document.getElementById("mySlide").src="./img/banner1.png";
+			slideNumber++;
+			break;
+		}
+	case 2: {
+			document.getElementById("mySlide").src="./img/banner2.png";
+			slideNumber++;
+			break;
+		}
+	case 3: {
+			document.getElementById("mySlide").src="./img/banner3.png";
+			slideNumber++;
+			break;
+		}
+	case 4: {
+			document.getElementById("mySlide").src="./img/banner4.png";
+			slideNumber=1;
+			break;
+	}
+	default: slideNumber=1;
+}
+  
+  setTimeout(carousel, 2000); // Change image every 2 seconds
+}
+</script>
+
+
+
+
+
+
+
+
+
+<script src="js/extention/choices.js"></script>
+    <script>
+      const customSelects = document.querySelectorAll("select");
+      const deleteBtn = document.getElementById('delete')
+      const choices = new Choices('select',
+      {
+        searchEnabled: false,
+        itemSelectText: '',
+        removeItemButton: true,
+      });
+      for (let i = 0; i < customSelects.length; i++)
+      {
+        customSelects[i].addEventListener('addItem', function(event)
+        {
+          if (event.detail.value)
+          {
+            let parent = this.parentNode.parentNode
+            parent.classList.add('valid')
+            parent.classList.remove('invalid')
+          }
+          else
+          {
+            let parent = this.parentNode.parentNode
+            parent.classList.add('invalid')
+            parent.classList.remove('valid')
+          }
+        }, false);
+      }
+      deleteBtn.addEventListener("click", function(e)
+      {
+        e.preventDefault()
+        const deleteAll = document.querySelectorAll('.choices__button')
+        for (let i = 0; i < deleteAll.length; i++)
+        {
+          deleteAll[i].click();
+        }
+      });
+      function showOrHideAdvancedSearchBox(){
+        document.getElementsByClassName('advance-search')[0].hidden = !document.getElementsByClassName('advance-search')[0].hidden
+      }
+    </script>
+</body>
+<script> 
+  function showValues(){
+   document.getElementById("range_value").innerHTML="value: "+document.getElementById("range_slider").value;
+  var slider_value=parseInt(document.getElementById("range_slider").value);
+   if(0<slider_value && slider_value <=4){
+    // setTimeout(()=>{
+    // alert("DOOH-Device One has been selected as per the user preference");document.getElementById("submit_button").hidden=false;},500);
+   }
+   else if(5<=slider_value && slider_value <=7){
+  //  setTimeout(()=>{
+  //   alert("DOOH-Device Two has been selected as per the user preference");document.getElementById("submit_button").hidden=false;},500);
+   }
+   else 
+   if(8<=slider_value && slider_value <=10){
+  //  setTimeout(()=>{
+  //   alert("DOOH-Device Three has been selected as per the user preference");document.getElementById("submit_button").hidden=false;},500);
+   }
+   else {
+    return;
+   }
+}
+  function showSlider(){
+    SelectedAttribute = document.getElementById('aim_attributes').value;
+    console.log(SelectedAttribute);
+     document.getElementById("selected_attribute_p").innerHTML=""+SelectedAttribute+" Range";
+     document.getElementById("slidercontainer").hidden = document.getElementById('toggle-search-button').innerHTML==='Basic Search'?false:true
+
+	//  document.getElementById("submit_button").hidden=true;
+  
+  }
+  function togglSearch(){
+    console.log(document.getElementById('toggle-search-button').innerHTML)
+    document.getElementById('bas-search').hidden = document.getElementById('toggle-search-button').innerHTML==='Advanced Search'?true:false
+    document.getElementById('adv-search').hidden = document.getElementById('toggle-search-button').innerHTML==='Basic Search'?true:false
+    document.getElementById('toggle-search-button').innerHTML = document.getElementById('toggle-search-button').innerHTML==='Advanced Search'?'Basic Search':'Advanced Search'
+    
+    return false;
+  }
+  
+  </script>
+  <style>
+    .slidercontainer {
+      width: 100%;
+    }
+    
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 25px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    
+    .slider:hover {
+      opacity: 1;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      background: #04AA6D;
+      cursor: pointer;
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      background: #04AA6D;
+      cursor: pointer;
+    }
+    </style>
+</html>
